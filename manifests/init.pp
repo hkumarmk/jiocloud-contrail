@@ -7,11 +7,11 @@
 # [*manage_rabbitmq*]
 #    Whether to manage rabbitmq in the module
 #
-# === Dependancies
+# [*manage_zookeeper*]
+#    Whether to manage zookeeper in this module
 #
-# Below dependant puppet modules needs to be installed
-#
-# puppetlabs/rabbitmq: https://github.com/puppetlabs/puppetlabs-rabbitmq
+# [*zookeeper_server_id*]
+#    A Unique id of zookeeper server within the cluster
 #
 #
 # === Examples
@@ -28,6 +28,8 @@ class contrail (
   $manage_rabbitmq       = true,
   $rabbitmq_manage_repo = false,
   $rabbitmq_admin_enable = false,
+  $manage_zookeeper    = true,
+  $zookeeper_server_id = 1,
 ) {
 
   ##
@@ -62,4 +64,17 @@ class contrail (
 
     Anchor['contrail::start'] -> Class['::rabbitmq'] -> Anchor['contrail::end_base_services']
   }
+
+  ##
+  ##  setup zookeeper if enabled
+  ##
+
+  if $manage_zookeeper {
+    class {'contrail::zookeeper':
+      server_id => $zookeeper_server_id,
+    }
+
+    Anchor['contrail::start'] -> Class['contrail::zookeeper'] -> Anchor['contrail::end_base_services']
+  }
+
 }

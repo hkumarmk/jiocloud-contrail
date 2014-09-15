@@ -3,12 +3,13 @@ require 'spec_helper'
 describe 'contrail' do
   let :facts do
     {
-    :operatingsystem => 'Ubuntu',
-    :osfamily        => 'Debian',
-    :lsbdistid       => 'ubuntu',
-    :lsbdistcodename => 'trusty'
+      :operatingsystem => 'Ubuntu',
+      :osfamily        => 'Debian',
+      :lsbdistid       => 'ubuntu',
+      :lsbdistcodename => 'trusty'
     }
   end
+
   context 'with defaults' do
     it do
       should contain_class('contrail::system_config')
@@ -16,6 +17,7 @@ describe 'contrail' do
         'manage_repos' => false,
         'admin_enable' => false
       })
+      should contain_class('contrail::zookeeper').with_server_id('1')
     end
   end
 
@@ -32,6 +34,17 @@ describe 'contrail' do
           'admin_enable' => true
         })
       end
+    end
+  end
+
+  context 'with zookeeper params' do
+    context 'when zookeeper server id is 3' do
+      let (:params) { { :zookeeper_server_id => 3 } }
+      it { should contain_class('contrail::zookeeper').with_server_id('3') }
+    end
+    context 'when zookeeper disabled' do
+      let (:params) { { :manage_zookeeper => false } }
+      it { should_not contain_class('contrail::zookeeper') }
     end
   end
 end

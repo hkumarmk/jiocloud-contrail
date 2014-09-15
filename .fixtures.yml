@@ -3,8 +3,8 @@ fixtures:
     contrail: "#{source_dir}"
   repositories:
     stdlib:
-      repo: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
-      ref: "2.6.0"
+      repo: https://github.com/puppetlabs/puppetlabs-stdlib.git
+      ref: 4.3.2
     sysctl:
       repo: https://github.com/duritong/puppet-sysctl
       ref: 3b027e816818f2c1086075038ac9b4af1cadbc24
@@ -17,3 +17,9 @@ fixtures:
     rabbitmq:
       repo: https://github.com/puppetlabs/puppetlabs-rabbitmq
       ref: 4.0.0
+    zookeeper:
+      repo: https://github.com/deric/puppet-zookeeper
+      ref: v0.2.4
+    java:
+      repo: https://github.com/puppetlabs/puppetlabs-java
+      ref: 1.1.2
