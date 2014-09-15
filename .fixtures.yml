@@ -23,3 +23,9 @@ fixtures:
     java:
       repo: https://github.com/puppetlabs/puppetlabs-java
       ref: 1.1.2
+    haproxy:
+      repo: https://github.com/puppetlabs/puppetlabs-haproxy
+      ref: 1.0.0
+    concat:
+      repo: https://github.com/puppetlabs/puppetlabs-concat
+      ref: 1.1.0

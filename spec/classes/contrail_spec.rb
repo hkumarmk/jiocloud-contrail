@@ -6,7 +6,9 @@ describe 'contrail' do
       :operatingsystem => 'Ubuntu',
       :osfamily        => 'Debian',
       :lsbdistid       => 'ubuntu',
-      :lsbdistcodename => 'trusty'
+      :lsbdistcodename => 'trusty',
+      :ipaddress       => '10.1.1.1',
+      :concat_basedir  => '/tmp'
     }
   end
 
@@ -18,6 +20,12 @@ describe 'contrail' do
         'admin_enable' => false
       })
       should contain_class('contrail::zookeeper').with_server_id('1')
+      should contain_class('contrail::haproxy')
+      should contain_class('contrail::haproxy::services').with({
+        'neutron_backend_ips'        => '10.1.1.1',
+        'contrail_api_backend_ips'   => '10.1.1.1',
+        'contrail_discovery_backend_ips' => '10.1.1.1'
+      })
     end
   end
 
@@ -45,6 +53,21 @@ describe 'contrail' do
     context 'when zookeeper disabled' do
       let (:params) { { :manage_zookeeper => false } }
       it { should_not contain_class('contrail::zookeeper') }
+    end
+  end
+
+  context 'with Haproxy params' do
+    context 'with control_ip_list' do
+      let (:params) { { :control_ip_list => ['10.1.1.1','10.1.1.2','10.1.1.3'] } }
+      it { should contain_class('contrail::haproxy::services').with({
+        'neutron_backend_ips'        => ['10.1.1.1','10.1.1.2','10.1.1.3'],
+        'contrail_api_backend_ips'   => ['10.1.1.1','10.1.1.2','10.1.1.3'],
+        'contrail_discovery_backend_ips' => ['10.1.1.1','10.1.1.2','10.1.1.3']
+      }) }
+    end
+    context 'when haproxy disabled' do
+      let (:params) { { :manage_haproxy => false } }
+      it { should_not contain_class('contrail::haproxy') }
     end
   end
 end

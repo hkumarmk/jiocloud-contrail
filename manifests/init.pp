@@ -13,6 +13,13 @@
 # [*zookeeper_server_id*]
 #    A Unique id of zookeeper server within the cluster
 #
+# [*manage_haproxy*]
+#   Whether to manage haproxy in this module
+#
+# [*control_ip_list*]
+#   An array of contrail control node IP list
+#
+#
 #
 # === Examples
 #
@@ -30,6 +37,8 @@ class contrail (
   $rabbitmq_admin_enable = false,
   $manage_zookeeper    = true,
   $zookeeper_server_id = 1,
+  $manage_haproxy         = true,
+  $control_ip_list        = [$::ipaddress],
 ) {
 
   ##
@@ -77,4 +86,19 @@ class contrail (
     Anchor['contrail::start'] -> Class['contrail::zookeeper'] -> Anchor['contrail::end_base_services']
   }
 
+  ##
+  ## Sometimes people may use existing load balancer to load balance contrail services too.
+  ##
+  ## contrail::haproxy::services accept below parameters
+  ##
+
+  if $manage_haproxy {
+    include contrail::haproxy
+    class { 'contrail::haproxy::services':
+      neutron_backend_ips            => $control_ip_list,
+      contrail_api_backend_ips       => $control_ip_list,
+      contrail_discovery_backend_ips => $control_ip_list,
+    }
+    Anchor['contrail::start'] -> Class['contrail::haproxy'] -> Class['contrail::haproxy::services'] -> Anchor['contrail::end_base_services']
+  }
 }

@@ -28,3 +28,11 @@ mod 'puppetlabs/stdlib',
 mod 'deric/zookeeper',
   :git => "#{base_url}/deric/puppet-zookeeper",
   :ref => 'v0.2.4'
+
+mod 'puppetlabs/haproxy',
+  :git => "#{base_url}/puppetlabs/puppetlabs-haproxy",
+  :ref => '1.0.0'
+
+mod 'puppetlabs/concat',
+  :git => "#{base_url}/puppetlabs/puppetlabs-concat",
+  :ref => '1.1.0'
