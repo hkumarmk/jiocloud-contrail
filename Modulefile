@@ -8,6 +8,8 @@ description 'This provides simple interface to Install and configure contrail. T
 project_page 'https://github.com/JioCloud/jiocloud-contrail'
 
 ## Add dependencies, if any:
+# dependency 'nanliu/puppet-staging', '>= 0.4.0'
+# dependency 'puppetlabs/puppetlabs-apt', '>= 1.6.0'
 # dependency 'puppetlabs/rabbitmq', '>= 4.0.0'
 # dependency 'puppetlabs/puppetlabs-stdlib', '>= 2.6.0'
 # dependency 'duritong/puppet-sysctl', '>= 3b027e816818f2c1086075038ac9b4af1cadbc24'
