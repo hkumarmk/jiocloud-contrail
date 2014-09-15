@@ -19,6 +19,9 @@
 # [*control_ip_list*]
 #   An array of contrail control node IP list
 #
+# [*manage_cassandra*]
+#    Whether to manage cassandra in this module
+#
 #
 #
 # === Examples
@@ -39,6 +42,12 @@ class contrail (
   $zookeeper_server_id = 1,
   $manage_haproxy         = true,
   $control_ip_list        = [$::ipaddress],
+  $manage_cassandra       = true,
+  $cassandra_seeds        = [$::ipaddress],
+  $cassandra_cluster_name =  'contrail',
+  $cassandra_thread_stack_size = 300,
+  $cassandra_version      = '1.2.18-1',
+  $cassandr_package_name  = 'dsc12',
 ) {
 
   ##
@@ -65,6 +74,12 @@ class contrail (
   ##
 
   if $manage_rabbitmq {
+    ##
+    ## Need to have atleast below heiradata
+    ## rabbitmq::manage_repos: no
+    ## rabbitmq::admin_enable: no
+    ## This is the setup with contrail, may need to test without above setting true
+    ##
 
     class {'::rabbitmq':
       manage_repos => $rabbitmq_manage_repo,
@@ -100,5 +115,22 @@ class contrail (
       contrail_discovery_backend_ips => $control_ip_list,
     }
     Anchor['contrail::start'] -> Class['contrail::haproxy'] -> Class['contrail::haproxy::services'] -> Anchor['contrail::end_base_services']
+  }
+
+  ##
+  ##  Setup cassandra
+  ##  This assumes default configurations
+  ##  Required Below mentioned Hiera data
+  ##
+
+  if $manage_cassandra {
+    class { '::cassandra':
+      seeds             => $cassandra_seeds,
+      cluster_name      => $cassandra_cluster_name,
+      thread_stack_size => $cassandra_thread_stack_size,
+      version           => $cassandra_version,
+      package_name      => $cassandr_package_name,
+    }
+    Anchor['contrail::start'] -> Class['::cassandra'] -> Anchor['contrail::end_base_services']
   }
 }

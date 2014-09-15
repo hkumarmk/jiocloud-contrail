@@ -36,3 +36,6 @@ mod 'puppetlabs/haproxy',
 mod 'puppetlabs/concat',
   :git => "#{base_url}/puppetlabs/puppetlabs-concat",
   :ref => '1.1.0'
+
+mod 'msimonin/puppet-cassandra',
+  :git => "#{base_url}/msimonin/puppet-cassandra"

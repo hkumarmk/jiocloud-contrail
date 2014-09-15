@@ -8,7 +8,8 @@ describe 'contrail' do
       :lsbdistid       => 'ubuntu',
       :lsbdistcodename => 'trusty',
       :ipaddress       => '10.1.1.1',
-      :concat_basedir  => '/tmp'
+      :concat_basedir  => '/tmp',
+      :processorcount  => 2,
     }
   end
 
@@ -26,6 +27,10 @@ describe 'contrail' do
         'contrail_api_backend_ips'   => '10.1.1.1',
         'contrail_discovery_backend_ips' => '10.1.1.1'
       })
+     should contain_class('cassandra').with({
+        'seeds'          => ['10.1.1.1'],
+        'cluster_name'   => 'contrail',
+     })
     end
   end
 
@@ -53,6 +58,23 @@ describe 'contrail' do
     context 'when zookeeper disabled' do
       let (:params) { { :manage_zookeeper => false } }
       it { should_not contain_class('contrail::zookeeper') }
+    end
+  end
+
+  context 'with cassandra params' do
+    context 'when cassandra_seeds and cluster name set' do
+      let (:params) { { 
+        :cassandra_seeds        => ['10.1.1.1','10.1.1.2'],
+        :cassandra_cluster_name => 'testcluster',
+      } }
+      it { should contain_class('cassandra').with({
+        'seeds'          => ['10.1.1.1','10.1.1.2'],
+        'cluster_name'   => 'testcluster',
+      }) }
+    end
+    context 'when cassandra disabled' do
+      let (:params) { { :manage_cassandra => false } }
+      it { should_not contain_class('cassandra') }
     end
   end
 
