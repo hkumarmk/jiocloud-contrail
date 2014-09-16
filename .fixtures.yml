@@ -31,3 +31,6 @@ fixtures:
       ref: 1.1.0
     cassandra:
       repo: https://github.com/msimonin/puppet-cassandra
+    redis:
+      repo: https://github.com/fsalum/puppet-redis
+      ref: 0.0.12

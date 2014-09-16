@@ -39,3 +39,7 @@ mod 'puppetlabs/concat',
 
 mod 'msimonin/puppet-cassandra',
   :git => "#{base_url}/msimonin/puppet-cassandra"
+
+mod 'fsalum/redis',
+  :git => "#{base_url}/fsalum/puppet-redis",
+  :ref => '0.0.12'

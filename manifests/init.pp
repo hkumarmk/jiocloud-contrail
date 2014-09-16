@@ -22,6 +22,9 @@
 # [*manage_cassandra*]
 #    Whether to manage cassandra in this module
 #
+# [*manage_redis*]
+#    Whteher to manage redis in this module
+#
 #
 #
 # === Examples
@@ -35,11 +38,11 @@
 #
 
 class contrail (
-  $manage_rabbitmq       = true,
-  $rabbitmq_manage_repo = false,
-  $rabbitmq_admin_enable = false,
-  $manage_zookeeper    = true,
-  $zookeeper_server_id = 1,
+  $manage_rabbitmq        = true,
+  $rabbitmq_manage_repo   = false,
+  $rabbitmq_admin_enable  = false,
+  $manage_zookeeper       = true,
+  $zookeeper_server_id    = 1,
   $manage_haproxy         = true,
   $control_ip_list        = [$::ipaddress],
   $manage_cassandra       = true,
@@ -48,6 +51,7 @@ class contrail (
   $cassandra_thread_stack_size = 300,
   $cassandra_version      = '1.2.18-1',
   $cassandr_package_name  = 'dsc12',
+  $manage_redis           = true,
 ) {
 
   ##
@@ -133,4 +137,15 @@ class contrail (
     }
     Anchor['contrail::start'] -> Class['::cassandra'] -> Anchor['contrail::end_base_services']
   }
+
+  ##
+  ## Manage redis if enabled.
+  ##
+
+  if $manage_redis {
+    include ::redis
+
+    Anchor['contrail::start'] -> Class['::redis'] -> Anchor['contrail::end_base_services']
+  }
+
 }

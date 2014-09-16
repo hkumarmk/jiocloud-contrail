@@ -31,6 +31,7 @@ describe 'contrail' do
         'seeds'          => ['10.1.1.1'],
         'cluster_name'   => 'contrail',
      })
+     should contain_class('redis')
     end
   end
 
@@ -63,7 +64,7 @@ describe 'contrail' do
 
   context 'with cassandra params' do
     context 'when cassandra_seeds and cluster name set' do
-      let (:params) { { 
+      let (:params) { {
         :cassandra_seeds        => ['10.1.1.1','10.1.1.2'],
         :cassandra_cluster_name => 'testcluster',
       } }
@@ -91,5 +92,10 @@ describe 'contrail' do
       let (:params) { { :manage_haproxy => false } }
       it { should_not contain_class('contrail::haproxy') }
     end
+  end
+
+  context 'when redis disabled' do
+    let (:params) { { :manage_redis => false } }
+    it { should_not contain_class('redis') }
   end
 end
