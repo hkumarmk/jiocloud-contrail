@@ -148,4 +148,10 @@ class contrail (
     Anchor['contrail::start'] -> Class['::redis'] -> Anchor['contrail::end_base_services']
   }
 
+  ##
+  ## Manage contrail ifmap
+  ##
+  class {'contrail::ifmap':
+    control_ip_list => $control_ip_list
+  }
 }

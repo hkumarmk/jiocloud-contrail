@@ -27,11 +27,14 @@ describe 'contrail' do
         'contrail_api_backend_ips'   => '10.1.1.1',
         'contrail_discovery_backend_ips' => '10.1.1.1'
       })
-     should contain_class('cassandra').with({
+      should contain_class('cassandra').with({
         'seeds'          => ['10.1.1.1'],
         'cluster_name'   => 'contrail',
-     })
-     should contain_class('redis')
+      })
+      should contain_class('redis')
+      should contain_class('contrail::ifmap').with({
+        'control_ip_list' => ['10.1.1.1'],
+      })
     end
   end
 
@@ -92,6 +95,14 @@ describe 'contrail' do
       let (:params) { { :manage_haproxy => false } }
       it { should_not contain_class('contrail::haproxy') }
     end
+  end
+
+  context 'with ifmap server param' do
+    let (:params) { { :control_ip_list => ['10.1.1.1','10.1.1.2','10.1.1.3'] } }
+
+    it {  should contain_class('contrail::ifmap').with({
+        'control_ip_list' => ['10.1.1.1','10.1.1.2','10.1.1.3'],
+      }) }
   end
 
   context 'when redis disabled' do
