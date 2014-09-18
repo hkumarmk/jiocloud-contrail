@@ -33,22 +33,22 @@ class contrail::haproxy::services(
 
 
   contrail::haproxy::member { 'neutron':
-    vip              => $neutron_vip_orig,
-    listen_ports     => 9696,
+    vip               => $neutron_vip_orig,
+    listen_ports      => 9696,
     balancer_ports    => '9697',
     cluster_addresses => $neutron_backend_ips,
   }
 
   contrail::haproxy::member { 'contrail_api':
-    vip              => $contrail_api_vip_orig,
-    listen_ports     => 8082,
+    vip               => $contrail_api_vip_orig,
+    listen_ports      => 8082,
     balancer_ports    => 9100,
     cluster_addresses => $contrail_api_backend_ips,
   }
 
   contrail::haproxy::member { 'contrail_discovery':
-    vip              => $contrail_discovery_vip_orig,
-    listen_ports     => 5998,
+    vip               => $contrail_discovery_vip_orig,
+    listen_ports      => 5998,
     balancer_ports    => '9110',
     cluster_addresses => $contrail_discovery_backend_ips,
   }

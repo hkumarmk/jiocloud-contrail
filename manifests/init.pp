@@ -64,33 +64,30 @@ class contrail (
   }
   anchor {'contrail::end':}
 
-
   ##
   ## contrail::system_config does operating system parameter changes,
   ##       and make the system ready to run contrail services
   ##
 
   include ::contrail::system_config
-  Anchor['contrail::start'] -> Class['contrail::system_config'] -> Anchor['contrail::end_base_services']
+  Anchor['contrail::start'] ->
+  Class['contrail::system_config'] ->
+  Anchor['contrail::end_base_services']
 
   ##
   ## sometimes existing rabbitmq server/cluster would be used
   ##
 
   if $manage_rabbitmq {
-    ##
-    ## Need to have atleast below heiradata
-    ## rabbitmq::manage_repos: no
-    ## rabbitmq::admin_enable: no
-    ## This is the setup with contrail, may need to test without above setting true
-    ##
 
     class {'::rabbitmq':
       manage_repos => $rabbitmq_manage_repo,
       admin_enable => $rabbitmq_admin_enable,
     }
 
-    Anchor['contrail::start'] -> Class['::rabbitmq'] -> Anchor['contrail::end_base_services']
+    Anchor['contrail::start'] ->
+    Class['::rabbitmq'] ->
+    Anchor['contrail::end_base_services']
   }
 
   ##
@@ -102,11 +99,14 @@ class contrail (
       server_id => $zookeeper_server_id,
     }
 
-    Anchor['contrail::start'] -> Class['contrail::zookeeper'] -> Anchor['contrail::end_base_services']
+    Anchor['contrail::start'] ->
+    Class['contrail::zookeeper'] ->
+    Anchor['contrail::end_base_services']
   }
 
   ##
-  ## Sometimes people may use existing load balancer to load balance contrail services too.
+  ## Sometimes people may use existing load balancer to load balance
+  ##   contrail services too.
   ##
   ## contrail::haproxy::services accept below parameters
   ##
@@ -118,7 +118,10 @@ class contrail (
       contrail_api_backend_ips       => $control_ip_list,
       contrail_discovery_backend_ips => $control_ip_list,
     }
-    Anchor['contrail::start'] -> Class['contrail::haproxy'] -> Class['contrail::haproxy::services'] -> Anchor['contrail::end_base_services']
+    Anchor['contrail::start'] ->
+    Class['contrail::haproxy'] ->
+    Class['contrail::haproxy::services'] ->
+    Anchor['contrail::end_base_services']
   }
 
   ##
@@ -135,7 +138,9 @@ class contrail (
       version           => $cassandra_version,
       package_name      => $cassandra_package_name,
     }
-    Anchor['contrail::start'] -> Class['::cassandra'] -> Anchor['contrail::end_base_services']
+    Anchor['contrail::start'] ->
+    Class['::cassandra'] ->
+    Anchor['contrail::end_base_services']
   }
 
   ##
@@ -145,7 +150,9 @@ class contrail (
   if $manage_redis {
     include ::redis
 
-    Anchor['contrail::start'] -> Class['::redis'] -> Anchor['contrail::end_base_services']
+    Anchor['contrail::start'] ->
+    Class['::redis'] ->
+    Anchor['contrail::end_base_services']
   }
 
   ##

@@ -1,9 +1,12 @@
-##
-## configure haproxy only if it is enabled
-##   Sometimes people may use existing load balancer to load balance contrail services too
-## TODO: There are number of parameters can be added to make this externally configurable.
-##    all the parameters are hardcoded for now.
-##
+#
+# Class contrail::haproxy
+# configure haproxy only if it is enabled
+#   Sometimes people may use existing load balancer to load balance contrail
+#      services too
+# TODO: There are number of parameters can be added to make this externally
+# configurable.
+#    all the parameters are hardcoded for now.
+#
 
 class contrail::haproxy {
 
@@ -45,11 +48,14 @@ class contrail::haproxy {
     ports     => '8084',
     mode      => 'http',
     options   => {
-      'option'  => [
-        'httplog',
-      ],
-      'stats' => ['enable', 'uri /lb-stats'],
-    },
+                  'option' => [
+                                'httplog',
+                              ],
+                  'stats'  => [
+                                'enable',
+                                'uri /lb-stats'
+                              ],
+                  },
   }
 
 }
