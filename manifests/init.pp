@@ -38,21 +38,21 @@
 #
 
 class contrail (
-  $manage_rabbitmq        = true,
-  $rabbitmq_manage_repo   = false,
-  $rabbitmq_admin_enable  = false,
-  $manage_zookeeper       = true,
-  $zookeeper_server_id    = 1,
-  $manage_haproxy         = true,
-  $control_ip_list        = [$::ipaddress],
-  $manage_cassandra       = true,
-  $cassandra_seeds        = [$::ipaddress],
-  $cassandra_cluster_name =  'contrail',
-  $cassandra_thread_stack_size = 300,
-  $cassandra_version      = '1.2.18-1',
-  $cassandr_package_name  = 'dsc12',
-  $manage_redis           = true,
-) {
+  $manage_rabbitmq             = $contrail::params::manage_rabbitmq,
+  $rabbitmq_manage_repo        = $contrail::params::rabbitmq_manage_repo,
+  $rabbitmq_admin_enable       = $contrail::params::rabbitmq_admin_enable,
+  $manage_zookeeper            = $contrail::params::manage_zookeeper,
+  $zookeeper_server_id         = $contrail::params::zookeeper_server_id,
+  $manage_haproxy              = $contrail::params::manage_haproxy,
+  $control_ip_list             = $contrail::params::control_ip_list,
+  $manage_cassandra            = $contrail::params::manage_cassandra,
+  $cassandra_seeds             = $contrail::params::cassandra_seeds,
+  $cassandra_cluster_name      = $contrail::params::cassandra_cluster_name,
+  $cassandra_thread_stack_size = $contrail::params::cassandra_thread_stack_size,
+  $cassandra_version           = $contrail::params::cassandra_version,
+  $cassandra_package_name      = $contrail::params::cassandra_package_name,
+  $manage_redis                = $contrail::params::manage_redis,
+) inherits contrail::params {
 
   ##
   ## Declaring anchors
@@ -133,7 +133,7 @@ class contrail (
       cluster_name      => $cassandra_cluster_name,
       thread_stack_size => $cassandra_thread_stack_size,
       version           => $cassandra_version,
-      package_name      => $cassandr_package_name,
+      package_name      => $cassandra_package_name,
     }
     Anchor['contrail::start'] -> Class['::cassandra'] -> Anchor['contrail::end_base_services']
   }
