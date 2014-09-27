@@ -287,4 +287,13 @@ class contrail (
   Anchor['contrail::end_base_services'] ->
   Class['contrail::config'] ->
   Anchor['contrail::end']
+
+  ##
+  # Contrail control services
+  ##
+  class {'contrail::control':
+    control_ip_list => $control_ip_list,
+    config_ip       => $config_ip,
+  }
+
 }
