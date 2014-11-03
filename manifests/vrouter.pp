@@ -10,8 +10,6 @@ class contrail::vrouter (
   $keystone_admin_password,
   $api_ip                     = undef,
   $api_port                   = 8082,
-  $package_names              = [ 'contrail-vrouter-agent','contrail-utils',
-                                  'contrail-nova-driver','contrail-vrouter-dkms'],
   $package_ensure             = 'installed',
   $vrouter_interface          = 'vhost0',
   $vrouter_physical_interface = 'eth0',
@@ -26,6 +24,8 @@ class contrail::vrouter (
 
   include contrail::repo
 
+  $package_names              = [ 'contrail-vrouter-agent',
+                                  'contrail-nova-driver','contrail-utils']
 
   if has_interface_with($vrouter_interface) {
     $iface_for_vrouter_config = $vrouter_interface
@@ -60,6 +60,10 @@ class contrail::vrouter (
     ensure  => absent,
   }
 
+  package {'contrail-vrouter-dkms':
+    ensure => $package_ensure,
+    before => Package['contrail-vrouter-agent'],
+  }
   package {$package_names:
     ensure => $package_ensure,
   }
@@ -120,6 +124,7 @@ class contrail::vrouter (
     exec {'write_rebootrequired':
       command     => 'export DPKG_MAINTSCRIPT_PACKAGE=contrail-vrouter-dkms; /usr/share/update-notifier/notify-reboot-required',
       refreshonly => true,
+      provider    => shell,
       require     => [ Network_config[$vrouter_physical_interface],
                         Network_config[$vrouter_interface],
                         File['/usr/local/bin/vrouter-functions.sh'],
@@ -128,13 +133,31 @@ class contrail::vrouter (
     }
     if $autoreboot {
       notify {'Automatic System reboot is enabled, A system reboot may be happend if required':}
+
+      ##
+      # Reboot the system after current  puppet execution finished. This will
+      # make sure all puppet manifests will be finished before system reboot.
+      ##
+
       exec {'system_reboot':
-        command   => 'reboot -f; sleep 60',
-        logoutput => true,
+        command   => '/bin/true  # comment to satisfy puppet syntax requirements
+set -ex
+cat <<EOF > /root/._puppet_system_reboot.sh
+ppid=$(ps -p $$ -o ppid=|sed "s/ //g")
+rv=0
+while [ \$rv -eq 0 ]; do
+  sleep 3;
+  kill -0 \$ppid;
+  rv=\$?;
+done
+shutdown -r +1
+EOF
+bash /root/._puppet_system_reboot.sh &> /root/systemreboot.log  &',
         require   => [ Network_config[$vrouter_physical_interface],
                         Network_config[$vrouter_interface],
                         File['/usr/local/bin/vrouter-functions.sh'],
-                        File['/usr/local/bin/if-vhost0'] ],
+                        File['/usr/local/bin/if-vhost0'],
+                        Exec['write_rebootrequired'] ],
         onlyif    => 'grep System.restart.required /var/run/reboot-required',
       }
     }
